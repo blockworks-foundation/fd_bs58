@@ -29,7 +29,9 @@ pub(crate) fn encode_32<I: AsRef<[u8]>>(input: I) -> String {
     X = sum_i binary[i] * 2^(32*(BINARY_SZ-1-i)) */
 
     for i in 0..BINARY_SZ_32 {
-        binary[i] = bytes_as_u32[i].to_be(); // Convert to big-endian (network byte order)
+        unsafe {
+            binary[i] = core::ptr::read_unaligned(&bytes_as_u32[i]).to_be(); // Convert to big-endian (network byte order)
+        }
     }
 
     /* Convert to the intermediate format:
